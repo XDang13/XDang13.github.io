@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>强化学习（一） | XDang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="强化学习">
+    <meta name="description" content="前言首先，我先默认这个系列的读者都已经具备了基础的机器学习和深度学习知识（线性代数，概率论，机器学习，神经网络等等），所以在涉及到这些基础知识和专业术语的时候就不会详细解释了。 其次，这一系列主要是参考D.Silver在UCL的Reinforcement Learning课程和R.Sutton的《An Introduction to Reinforcement Learning》教材进行。整个系列">
+<meta property="og:type" content="article">
+<meta property="og:title" content="强化学习（一）">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;17&#x2F;%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89&#x2F;index.html">
+<meta property="og:site_name" content="XDang">
+<meta property="og:description" content="前言首先，我先默认这个系列的读者都已经具备了基础的机器学习和深度学习知识（线性代数，概率论，机器学习，神经网络等等），所以在涉及到这些基础知识和专业术语的时候就不会详细解释了。 其次，这一系列主要是参考D.Silver在UCL的Reinforcement Learning课程和R.Sutton的《An Introduction to Reinforcement Learning》教材进行。整个系列">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;17&#x2F;%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89&#x2F;强化学习（一）&#x2F;Reinforcement">
+<meta property="article:published_time" content="2019-12-17T14:32:49.000Z">
+<meta property="article:modified_time" content="2019-12-17T14:40:58.525Z">
+<meta property="article:author" content="西葫芦炖冬瓜">
+<meta property="article:tag" content="强化学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;17&#x2F;%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89&#x2F;强化学习（一）&#x2F;Reinforcement">
+    
+        <link rel="alternate" type="application/atom+xml" title="XDang" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.1.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/dino.png">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">西葫芦炖冬瓜</h5>
+          <a href="mailto:birdhouse@live.cn" title="birdhouse@live.cn" class="mail">birdhouse@live.cn</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">强化学习（一）</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">强化学习（一）</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-12-17T14:32:49.000Z" itemprop="datePublished" class="page-time">
+  2019-12-17
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#什么是强化学习"><span class="post-toc-number">2.</span> <span class="post-toc-text">什么是强化学习</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#基本概念"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">基本概念</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#例子"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">例子</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#强化学习问题的组成部分"><span class="post-toc-number">3.</span> <span class="post-toc-text">强化学习问题的组成部分</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#奖励"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">奖励</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#状态"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">状态</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#强化学习的四大要素"><span class="post-toc-number">4.</span> <span class="post-toc-text">强化学习的四大要素</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#策略"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">策略</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#收益信号"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">收益信号</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#价值函数"><span class="post-toc-number">4.3.</span> <span class="post-toc-text">价值函数</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#模型（可选）"><span class="post-toc-number">4.4.</span> <span class="post-toc-text">模型（可选）</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#强化学习代理的分类"><span class="post-toc-number">5.</span> <span class="post-toc-text">强化学习代理的分类</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#按有无策略和价值函数区分"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">按有无策略和价值函数区分</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#按有无模型区分"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">按有无模型区分</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-强化学习（一）"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">强化学习（一）</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-12-17 22:32:49" datetime="2019-12-17T14:32:49.000Z"  itemprop="datePublished">2019-12-17</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>首先，我先默认这个系列的读者都已经具备了基础的机器学习和深度学习知识（线性代数，概率论，机器学习，神经网络等等），所以在涉及到这些基础知识和专业术语的时候就不会详细解释了。</p>
+<p>其次，这一系列主要是参考D.Silver在UCL的Reinforcement Learning课程和R.Sutton的《An Introduction to Reinforcement Learning》教材进行。整个系列主要是跟着D.Silver的课程大纲走。所以，希望更加系统和全面学习强化学习的朋友可以去B站上观看D.Silver的课程，同时可以购买R.Sutton的教材（目前已经有了中译版）作为补充。</p>
+<p>最后，如果大家发现了任何问题或者有哪里看不懂的，可以给我留言，我会随缘回复的。</p>
+<h2 id="什么是强化学习"><a href="#什么是强化学习" class="headerlink" title="什么是强化学习"></a>什么是强化学习</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><p>首先，我们先来了解下什么是强化学习。强化学习，也可以叫做增强学习，作为几年来热度非常高的名词，相信研究人工智能的朋友或多或少的都听过。其中最为出名应该是AlphaGo以及进化版的AlphaGo Zero了。接下来我们来介绍一下强化学习是什么，以及它和监督学习与非监督学习有什么不同。</p>
+<p>简单来说强化学习就是指学习如何在一个任务或者环境中达到最大化的收益。学习者不会被提前告知什么是好的行为，什么是坏的行为，必须通过自己的不断探索发现哪些行为会带来正面的收益，哪些行为会带来负面的收益，并且最终通过采取一些好的行为来获取最大的收益。比起其他的机器学习方式，强化学习更加接近于自然界中动物的学习方式，不断与周围环境互动，学习如何能更好的生存下去。</p>
+<p>在进行下一面的内容前，我们先来明确一下强化学习有哪几重含义。首先，强化学习可以是指一个问题，比如我们可以说围棋AI是一个强化学习问题。其次，强化学习也是一类解决上述问题的方法，比如我们可以说AlphaGo运用了强化学习来解决围棋AI问题。最后，强化学习也可以是指研究此类问题和解决方法的研究领域。</p>
+<p>对比我们常用的监督学习学习，强化学习通常在学习过程没有已经标注好的数据集进行辅助，只能在不断地与环境进行交互中学习。通常监督学习所学习到的知识只能泛化到类似的场景中，比如图像识别中，如果在实际场景中，光线的明亮程度变化太大，则会降低判断的准确度，但是我们可以轻易的收集到大量在不同光线下具有代表性的数据。而在强化学习问题中，我们很难去收集到大量即正确又具有代表性的数据，比如我们在玩儿星际争霸时，我们可能会遇到成千上万中不同的情形，而且我们也很难去判断这些情形中哪些是类似的，哪些是有代表性的。所以，在强化学习中，要达到收益最大化的目标，只能通过自身与环境互动来学习。同样，强化学习也不同于无监督学习。无监督学习要解决的问题是在未标注的数据中找出隐含结构，比如KMeans聚类算法。而强化学习则是要解决如何获取最大收益的问题。因此，我们可以认为强化学习是机器学习中的第三类范式。</p>
+<h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><p>强化学习最具影响力的项目要数Alpha Go了，但Alpha Go和Alpha Go Master都并非单独使用了强化学习进行训练，在训练过程还用到了监督学习进行预训练。在之后的版本Alpha Go Zero和Alpha Zero则是完全使用强化学习进行训练。之后会单独写一篇文章来简单讲解一下Alpha Go系列。DeepMind的另一个强化学习代表项目则是2019年年初的Alpha Star星际争霸2项目。与之相对的则是OpenAI的Open AI Five Dota2项目。</p>
+<h2 id="强化学习问题的组成部分"><a href="#强化学习问题的组成部分" class="headerlink" title="强化学习问题的组成部分"></a>强化学习问题的组成部分</h2><p>一个强化学习问题主要是有智能体（Agent，也成了代理）和环境构成。而整个问题要解决的问题也就是智能体如何在环境中采取一系列的行动获取最大的奖励。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="强化学习（一）/Reinforcement" alt="Reinforcement Learning" title="Learning">
+                </div>
+                <div class="image-caption">Learning</div>
+            </figure>
+
+<p>在整个强化学习问题中，智能体通过观察环境中状态来作出相应的动作来与环境互动，做出动作之后，智能体则可以获得相应的奖励以及改变后的环境状态，以此循环往复，直至达成目标或者达成终止条件。在整个过程中，要明确一下几点：</p>
+<ol>
+<li>奖励</li>
+<li>状态</li>
+<li>环境</li>
+</ol>
+<h3 id="奖励"><a href="#奖励" class="headerlink" title="奖励"></a>奖励</h3><p>我们首先来介绍一下奖励。奖励可以说是整个强化学习问题中最为重要的部分。在整个强化学习中，奖励是唯一可以表明智能体表现好坏的信号，而智能体最终的目标就是获取最多的奖励。可以说整个强化学习都是建立在奖励之上。通常我们将奖励用$ R_{t} $表示。同时我们还要注意一点就是在强化学习中，奖励可能会有一定的延迟性，当前的一个行为可能要在之后几轮交互后才能体现出好坏。在强化学习中，我们需要注意有些时候可能牺牲当前的奖励来换取未来长期的奖励是一个更好的选择，例如投入时间来读博可能会少挣一些钱，但是长期来看读博会拓展未来的职业道路。</p>
+<h3 id="状态"><a href="#状态" class="headerlink" title="状态"></a>状态</h3><p>在我们介绍状态的概念前，先来介绍一下历史。历史就是指一系列观察信息，动作和奖励。可以用以下的公式来表示：<br>$$<br>H_t= O_1,R_1,A_1,…A_{t-1},O_t,R_t<br>$$<br>而接下来发生什么则依赖于历史，智能体选择的动作，对应的奖励和下一步观察到的信息。</p>
+<p>而所谓的状态就是指用来决定接下来发生什么的信息，也可以用以下公式来表达：<br>$$<br>S_t=f(H_t)<br>$$</p>
+<h2 id="强化学习的四大要素"><a href="#强化学习的四大要素" class="headerlink" title="强化学习的四大要素"></a>强化学习的四大要素</h2><h3 id="策略"><a href="#策略" class="headerlink" title="策略"></a>策略</h3><p>在强化学习中，策略就是</p>
+<h3 id="收益信号"><a href="#收益信号" class="headerlink" title="收益信号"></a>收益信号</h3><h3 id="价值函数"><a href="#价值函数" class="headerlink" title="价值函数"></a>价值函数</h3><h3 id="模型（可选）"><a href="#模型（可选）" class="headerlink" title="模型（可选）"></a>模型（可选）</h3><h2 id="强化学习代理的分类"><a href="#强化学习代理的分类" class="headerlink" title="强化学习代理的分类"></a>强化学习代理的分类</h2><h3 id="按有无策略和价值函数区分"><a href="#按有无策略和价值函数区分" class="headerlink" title="按有无策略和价值函数区分"></a>按有无策略和价值函数区分</h3><h3 id="按有无模型区分"><a href="#按有无模型区分" class="headerlink" title="按有无模型区分"></a>按有无模型区分</h3>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-12-17T14:40:58.525Z" itemprop="dateUpdated">2019-12-17 22:40:58</time>
+</span><br>
+
+
+        
+        这里可以写作者留言，标签和 hexo 中所有变量及辅助函数等均可调用，示例：<a href="/2019/12/17/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89/" target="_blank" rel="external">http://yoursite.com/2019/12/17/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="http://yoursite.com">
+            <img src="/img/dino.png" alt="西葫芦炖冬瓜">
+            西葫芦炖冬瓜
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" rel="tag">强化学习</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://yoursite.com/2019/12/17/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89/&title=《强化学习（一）》 — XDang&pic=http://yoursite.com/img/dino.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://yoursite.com/2019/12/17/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89/&title=《强化学习（一）》 — XDang&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/12/17/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《强化学习（一）》 — XDang&url=http://yoursite.com/2019/12/17/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89/&via=http://yoursite.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://yoursite.com/2019/12/17/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/12/16/test/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">test</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        var id = location.pathname
+        if (location.pathname.length > 50) {
+          id = location.pathname.replace(/\/\d+\/\d+\/\d+\//, '').replace('/', '').substring(0, 50)
+        }
+        const gitalk = new Gitalk({
+          clientID: '3df69d8ba595cac938c8',
+          clientSecret: 'fcf5215ec686233f2bbd403a5d03b1435048fd1d',
+          repo: 'XDang13.github.io',
+          owner: 'XDang13',
+          admin: ['XDang13'],
+          id: id,      // Ensure uniqueness and length less than 50
+          title: document.title.split('|')[0],
+          distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>西葫芦炖冬瓜 &copy; 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://yoursite.com/2019/12/17/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89/&title=《强化学习（一）》 — XDang&pic=http://yoursite.com/img/dino.png" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://yoursite.com/2019/12/17/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89/&title=《强化学习（一）》 — XDang&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2019/12/17/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《强化学习（一）》 — XDang&url=http://yoursite.com/2019/12/17/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89/&via=http://yoursite.com" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://yoursite.com/2019/12/17/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADLUlEQVR42u3aQW7jQAwEQP//01kgpwV2ZTVJGbCo0smIFWlqcmDIntcrvn5+r78/H13/3n/0nKOnvX/L0Xpen7iwsbGxb8KuMt4vrnr/0bdHP+lt1n+2BhsbG3sdu1q05mUmKXvVopgXTmxsbOxnst//P19tXeZPmLRA2NjY2M9kV0tawu4NnrCxsbGxe0OlZLn5WKd6z1XRBTY2NvY+di/o/c7PH8+3sbGxsb+M/VO8JkOi9w3MPOgtKLCxsbEXsZN4tTpmqgYMPXZ+/+F7sbGxsVewq6WiOtapbsdVg62TTcfGxsZexO7NYZLl9p6TR8h5tJBvGTY2NvYd2RNMXipy2OTYUCG6xsbGxl7Erh6d6RWY3jyn2uQkW4mNjY29mz0Z8SeAHntSIE+2AxsbG3sdOx/0VO/JJ1iXkZJIABsbG3sFuzqC78XDSYsyD5svmKVhY2NjL2XnZa96BKcwyi8Os05+CxsbG3sdu/r6qw73zGOD3oWNjY29id37dz8PfXsh8QXNRjwIw8bGxr47uzf074Wvk6OZvY0+XCE2Njb2OnY+MMpLWjUqmETL5QgZGxsbexH7qkLS25pqrFsdRUVrw8bGxr45OzlAkxeqfLN6A6PLQghsbGzsdexea5Ew8sVVY4lqGcbGxsZ+GnsSrPaah3xz80C3HA9gY2Nj35Cdz1jmI568TE7+GIW4GhsbG3sFe9IMzMtY8vbJWCoqXdjY2Ngr2L1WIWlR8gM6+RqSTTz5FhsbG3s1u9oq5COhvKXptTeFqAMbGxv7Aez8aM61heeqKPdks7CxsbEXsfPxUD5OmkTCeYmqHio6SUWwsbGxb8uuLr1XTqoNTC82KLQ92NjY2OvY1dC3Wsw+dzCo2rQ0MxBsbGzsr2dXo9mkaemN8nvgfHSFjY2NvY+dX73ilG/Q/C351mBjY2PvY/cG+u83aFLkeoOtavODjY2NvY/dK1qjQzPBkyejpZMnY2NjYz+SPWlF8oM1VXAv2MDGxsZ+Mrs6oO8NrZItTpqQC1oRbGxs7Juwq+Fu70BPj9ELeqNWBBsbG3sFu1pg5kdwJsOpakOCjY2NvZr9BzTzq88VSzbcAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = 'XDang';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
